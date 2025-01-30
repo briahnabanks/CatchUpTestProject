@@ -10,6 +10,13 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var scrollLayer: SKNode!
+    var car: SKSpriteNode!
+    var roadDraft: SKNode!
+    
+    let  scrollSpeed: CGFloat = 100
+    
+    let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var car : SKSpriteNode!
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
@@ -17,6 +24,8 @@ class GameScene: SKScene {
 
     
     override func didMove(to view: SKView) {
+        /* Setup your scene here */
+        scrollLayer = self.childNode(withName: "scrollLayer")
         
         columnPositions = [
             -175, 0, 175
@@ -24,6 +33,18 @@ class GameScene: SKScene {
         
         //Initialize column positions
         car = self.childNode(withName: "car") as? SKSpriteNode
+       
+        
+        //*gesture recognizer*
+        
+        
+        
+        //        let swipeRight : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GameScene.swipedRight))
+        //
+        //
+        //        swipeRight.direction = .right
+        //        view.addGestureRecognizer(swipeRight)
+        //
         
         car.position = CGPoint(x: columnPositions[0], y: -500)
 
@@ -83,6 +104,33 @@ class GameScene: SKScene {
     
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        /* Called before each frame is rendered */
+        scrollWorld()
+        
     }
+    
+    func scrollWorld(){
+        scrollLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
+        
+        /* Loop through scroll layer nodes */
+        for roadDraft in scrollLayer.children as! [SKSpriteNode] { 
+
+          /* Get ground node position, convert node position to scene space */
+            let roadDraftPosition = scrollLayer.convert(roadDraft.position, to: self)
+
+          /* Check if ground sprite has left the scene */
+            if roadDraftPosition.y <= -roadDraft.size.width / 1 {
+
+              /* Reposition ground sprite to the second starting position */
+                let newPosition = CGPoint(x: (self.size.width / 2) + roadDraft.size.width, y: roadDraftPosition.y);
+
+              /* Convert new node position back to scroll layer space */
+                roadDraft.position = self.convert(newPosition, to: scrollLayer); print("scroll")
+          }
+        }
+    }
+    
 }
+        
+      
+
