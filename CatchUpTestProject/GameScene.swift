@@ -57,7 +57,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch begins */
-    
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -70,43 +70,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Loop through scroll layer nodes */
         
-       
-            for road in scrollLayer.children as! [SKSpriteNode] {
-                
-                /* Get ground node position, convert node position to scene space */
-                let roadPosition = scrollLayer.convert(road.position, to: self)
-                
-                /* Check if ground sprite has left the scene */
-                if roadPosition.y <= -road.size.height / 2 {
-                    
-                    print("new road will load ")
-//                    /* Reposition ground sprite to the second starting position */
-//                    let newPosition = CGPoint(x: (self.size.height / 2) + road.size.width, y: roadPosition.y); print("yes")
-                    
-                    let newPosition = CGPoint(x: roadPosition.x, y: (self.size.height) + road.size.height / 2); print("yes")
-                    
-                    /* Convert new node position back to scroll layer space */
-                    road.position = self.convert(newPosition, to: scrollLayer); print("scroll")
-                    
-                }
-                //            /* Loop through scroll layer nodes */
-                //            for ground in scrollLayer.children as! [SKSpriteNode] {
-                //
-                //              /* Get ground node position, convert node position to scene space */
-                //              let groundPosition = scrollLayer.convert(ground.position, to: self)
-                //
-                //              /* Check if ground sprite has left the scene */
-                //              if groundPosition.x <= -ground.size.width / 2 {
-                //
-                //                  /* Reposition ground sprite to the second starting position */
-                //                  let newPosition = CGPoint(x: (self.size.width / 2) + ground.size.width, y: groundPosition.y)
-                //
-                //                  /* Convert new node position back to scroll layer space */
-                //                  ground.position = self.convert(newPosition, to: scrollLayer)
-                //              }
-            }
         
+        for road in scrollLayer.children as! [SKSpriteNode] {
+            
+            /* Get ground node position, convert node position to scene space */
+            let roadPosition = scrollLayer.convert(road.position, to: self)
+            
+            /* Check if ground sprite has left the scene */
+            if roadPosition.y <= -road.size.height / 2 {
+                
+                print("new road will load ")
+                //                    /* Reposition ground sprite to the second starting position */
+                //                    let newPosition = CGPoint(x: (self.size.height / 2) + road.size.width, y: roadPosition.y); print("yes")
+                
+                let newPosition = CGPoint(x: roadPosition.x, y: (self.size.height) + road.size.height / 2); print("yes")
+                
+                /* Convert new node position back to scroll layer space */
+                road.position = self.convert(newPosition, to: scrollLayer); print("scroll")
+                
+            }
+            //            /* Loop through scroll layer nodes */
+            //            for ground in scrollLayer.children as! [SKSpriteNode] {
+            //
+            //              /* Get ground node position, convert node position to scene space */
+            //              let groundPosition = scrollLayer.convert(ground.position, to: self)
+            //
+            //              /* Check if ground sprite has left the scene */
+            //              if groundPosition.x <= -ground.size.width / 2 {
+            //
+            //                  /* Reposition ground sprite to the second starting position */
+            //                  let newPosition = CGPoint(x: (self.size.width / 2) + ground.size.width, y: groundPosition.y)
+            //
+            //                  /* Convert new node position back to scroll layer space */
+            //                  ground.position = self.convert(newPosition, to: scrollLayer)
+            //              }
         }
+        
     }
 }
         
