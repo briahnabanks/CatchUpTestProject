@@ -12,7 +12,7 @@ class GameScene: SKScene {
     
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
-    var roadDraft: SKNode!
+    var road: SKNode!
     
     let  scrollSpeed: CGFloat = 100
     
@@ -62,19 +62,19 @@ class GameScene: SKScene {
         scrollLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through scroll layer nodes */
-        for roadDraft in scrollLayer.children as! [SKSpriteNode] { 
+        for road in scrollLayer.children as! [SKSpriteNode] {
 
           /* Get ground node position, convert node position to scene space */
-            let roadDraftPosition = scrollLayer.convert(roadDraft.position, to: self)
+            let roadPosition = scrollLayer.convert(road.position, to: self)
 
           /* Check if ground sprite has left the scene */
-            if roadDraftPosition.y <= -roadDraft.size.width / 1 {
+            if roadPosition.y <= -road.size.height / 1 {
 
               /* Reposition ground sprite to the second starting position */
-                let newPosition = CGPoint(x: (self.size.width / 2) + roadDraft.size.width, y: roadDraftPosition.y);
+                let newPosition = CGPoint(x: (self.size.height / 2) + road.size.width, y: roadPosition.y);
 
               /* Convert new node position back to scroll layer space */
-                roadDraft.position = self.convert(newPosition, to: scrollLayer); print("scroll")
+                road.position = self.convert(newPosition, to: scrollLayer); print("scroll")
           }
         }
     }
