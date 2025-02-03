@@ -45,50 +45,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func touchUp(atPoint pos : CGPoint) {
+    @objc func swipedRight(sender: UISwipeGestureRecognizer) { print("Object has been swiped")}
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { print("swipe detected")
+        for touch in touches {
+            let location = touch.location(in:self)
+            car.position.x = location.x
+        }
+        
         
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first {
-            initialTouchPosition = touch.location(in: self)
-            isSwipeActionCommitted = false
-        }
-    }
+        /* Called when a touch begins */
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let initialTouchPosition = initialTouchPosition, !isSwipeActionCommitted else { return }
-        if let touch = touches.first {
-            let currentTouchPosition = touch.location(in: self)
-            let movement = currentTouchPosition.x - initialTouchPosition.x
-            
-            if abs(movement) > 100
-            { // Threshold to detect a swipe
-                if movement > 0 {
-                    print("Swiped right")
-                    if car.position.x < columnPositions[2]{
-                        car.position.x += 90
-                    }
-                } else{
-                    print("Swiped left")
-                    if car.position.x > columnPositions[0]{
-                        car.position.x -= 90
-                    }
-                }
-                // Reset initial position to prevent continuous detection
-                self.initialTouchPosition = currentTouchPosition
-            }
-        }
     }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        initialTouchPosition = nil // Reset when touch ends
-        isSwipeActionCommitted = false
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-    }
-    
     
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
@@ -99,20 +69,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scrollLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through scroll layer nodes */
-        for roadDraft in scrollLayer.children as! [SKSpriteNode] {
-            
-            /* Get ground node position, convert node position to scene space */
-            let roadDraftPosition = scrollLayer.convert(roadDraft.position, to: self)
-            
-            /* Check if ground sprite has left the scene */
-            if roadDraftPosition.y <= roadDraft.size.height / 1 {
+        
+       
+            for road in scrollLayer.children as! [SKSpriteNode] {
                 
-                /* Reposition ground sprite to the second starting position */
-                let newPosition = CGPoint(x: (self.size.width / 2) + roadDraft.size.width, y: roadDraftPosition.y);
+                /* Get ground node position, convert node position to scene space */
+                let roadPosition = scrollLayer.convert(road.position, to: self)
                 
-                /* Convert new node position back to scroll layer space */
-                roadDraft.position = self.convert(newPosition, to: scrollLayer); print("scroll")
+                /* Check if ground sprite has left the scene */
+                if roadPosition.y <= -road.size.height / 2 {
+                    
+                    print("new road will load ")
+//                    /* Reposition ground sprite to the second starting position */
+//                    let newPosition = CGPoint(x: (self.size.height / 2) + road.size.width, y: roadPosition.y); print("yes")
+                    
+                    let newPosition = CGPoint(x: roadPosition.x, y: (self.size.height) + road.size.height / 2); print("yes")
+                    
+                    /* Convert new node position back to scroll layer space */
+                    road.position = self.convert(newPosition, to: scrollLayer); print("scroll")
+                    
+                }
+                //            /* Loop through scroll layer nodes */
+                //            for ground in scrollLayer.children as! [SKSpriteNode] {
+                //
+                //              /* Get ground node position, convert node position to scene space */
+                //              let groundPosition = scrollLayer.convert(ground.position, to: self)
+                //
+                //              /* Check if ground sprite has left the scene */
+                //              if groundPosition.x <= -ground.size.width / 2 {
+                //
+                //                  /* Reposition ground sprite to the second starting position */
+                //                  let newPosition = CGPoint(x: (self.size.width / 2) + ground.size.width, y: groundPosition.y)
+                //
+                //                  /* Convert new node position back to scroll layer space */
+                //                  ground.position = self.convert(newPosition, to: scrollLayer)
+                //              }
             }
+        
         }
     }
 }
