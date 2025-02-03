@@ -8,16 +8,13 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
     var roadDraft: SKNode!
-    
     let  scrollSpeed: CGFloat = 100
-    
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
-    var car : SKSpriteNode!
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
     var isSwipeActionCommitted = false
@@ -28,25 +25,15 @@ class GameScene: SKScene {
         scrollLayer = self.childNode(withName: "scrollLayer")
         
         columnPositions = [
-            -175, 0, 175
+            90, 160, 250
         ]
         
         //Initialize column positions
         car = self.childNode(withName: "car") as? SKSpriteNode
-       
+        car.position = CGPoint(x: columnPositions[1], y: 60)
         
-        //*gesture recognizer*
-        
-        
-        
-        //        let swipeRight : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GameScene.swipedRight))
-        //
-        //
-        //        swipeRight.direction = .right
-        //        view.addGestureRecognizer(swipeRight)
-        //
-        
-        car.position = CGPoint(x: columnPositions[0], y: -500)
+        //conform to physics delegate
+        self.physicsWorld.contactDelegate = self
 
     }
     
@@ -75,21 +62,21 @@ class GameScene: SKScene {
             let currentTouchPosition = touch.location(in: self)
             let movement = currentTouchPosition.x - initialTouchPosition.x
 
-            if abs(movement) > 200 { // Threshold to detect a swipe
+            if abs(movement) > 100
+            { // Threshold to detect a swipe
                 if movement > 0 {
                     print("Swiped right")
-                    if car.position.x < columnPositions[2] {
-                        car.position.x += 175
+                    if car.position.x < columnPositions[2]{
+                        car.position.x += 90
                     }
-                } else {
+                } else{
                     print("Swiped left")
-                    if car.position.x > columnPositions[0] {
-                        car.position.x -= 175
+                    if car.position.x > columnPositions[0]{
+                        car.position.x -= 90
                     }
                 }
                 // Reset initial position to prevent continuous detection
                 self.initialTouchPosition = currentTouchPosition
-                
             }
         }
     }
