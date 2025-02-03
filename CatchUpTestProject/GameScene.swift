@@ -12,8 +12,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
-    var roadDraft: SKNode!
-    let  scrollSpeed: CGFloat = 100
+    //var roadDraft: SKSpriteNode!
+    let scrollSpeed: CGFloat = 100
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
@@ -105,7 +105,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let roadDraftPosition = scrollLayer.convert(roadDraft.position, to: self)
             
             /* Check if ground sprite has left the scene */
-            if roadDraftPosition.y <= -roadDraft.size.width / 1 {
+            if roadDraftPosition.y <= roadDraft.size.height / 1 {
                 
                 /* Reposition ground sprite to the second starting position */
                 let newPosition = CGPoint(x: (self.size.width / 2) + roadDraft.size.width, y: roadDraftPosition.y);
