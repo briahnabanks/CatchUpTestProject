@@ -18,14 +18,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
     var isSwipeActionCommitted = false
-
+    
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         scrollLayer = self.childNode(withName: "scrollLayer")
         
         columnPositions = [
-            90, 160, 250
+            88.5, 160, 231.5
         ]
         
         //Initialize column positions
@@ -34,19 +34,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //conform to physics delegate
         self.physicsWorld.contactDelegate = self
-
+        
     }
     
     func touchDown(atPoint pos : CGPoint) {
-
+        
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-
+        
     }
     
     func touchUp(atPoint pos : CGPoint) {
-
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -61,7 +61,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let touch = touches.first {
             let currentTouchPosition = touch.location(in: self)
             let movement = currentTouchPosition.x - initialTouchPosition.x
-
+            
             if abs(movement) > 100
             { // Threshold to detect a swipe
                 if movement > 0 {
@@ -93,30 +93,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         scrollWorld()
-        
     }
     
     func scrollWorld(){
         scrollLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through scroll layer nodes */
-        for roadDraft in scrollLayer.children as! [SKSpriteNode] { 
-
-          /* Get ground node position, convert node position to scene space */
+        for roadDraft in scrollLayer.children as! [SKSpriteNode] {
+            
+            /* Get ground node position, convert node position to scene space */
             let roadDraftPosition = scrollLayer.convert(roadDraft.position, to: self)
-
-          /* Check if ground sprite has left the scene */
+            
+            /* Check if ground sprite has left the scene */
             if roadDraftPosition.y <= -roadDraft.size.width / 1 {
-
-              /* Reposition ground sprite to the second starting position */
+                
+                /* Reposition ground sprite to the second starting position */
                 let newPosition = CGPoint(x: (self.size.width / 2) + roadDraft.size.width, y: roadDraftPosition.y);
-
-              /* Convert new node position back to scroll layer space */
+                
+                /* Convert new node position back to scroll layer space */
                 roadDraft.position = self.convert(newPosition, to: scrollLayer); print("scroll")
-          }
+            }
         }
     }
-    
 }
         
       
