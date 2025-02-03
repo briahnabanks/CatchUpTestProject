@@ -8,19 +8,27 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
-    var road: SKNode!
-    
+    var roadDraft: SKNode!
     let  scrollSpeed: CGFloat = 100
-    
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
+    var columnPositions = [CGFloat]()
+    var initialTouchPosition: CGPoint?
+    var isSwipeActionCommitted = false
+
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         scrollLayer = self.childNode(withName: "scrollLayer")
+        
+        columnPositions = [
+            90, 160, 250
+        ]
+        
+        //Initialize column positions
         car = self.childNode(withName: "car") as? SKSpriteNode
        
         
