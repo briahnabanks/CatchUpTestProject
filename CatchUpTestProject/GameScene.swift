@@ -24,6 +24,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Setup your scene here */
         scrollLayer = self.childNode(withName: "scrollLayer")
         
+        //conform scene to contact delegate to handle collisions
+        self.physicsWorld.contactDelegate = self
+        
         columnPositions = [
             frame.midX - 71.5, frame.midX, frame.midX + 71.5
         ]
@@ -42,6 +45,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startGeneratingSprites()
     }
     
+    func didBegin(_ contact: SKPhysicsContact) {
+        var firstBody: SKPhysicsBody
+        var secondBody: SKPhysicsBody
+
+        // Assign the bodies so that firstBody is always the sprite
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+
+        // check if car and good item collided
+        if firstBody.categoryBitMask == PhysicsCategory.sprite && secondBody.categoryBitMask == PhysicsCategory.car {
+            print("good item")
+            if let sprite = firstBody.node {
+                // Remove the sprite
+                sprite.removeFromParent()
+            }
+        }
+        // check if car and bad item have collided
+        else if firstBody.categoryBitMask == PhysicsCategory.obstacle && secondBody.categoryBitMask == PhysicsCategory.car{
+            print("bad item")
+            if let sprite = firstBody.node {
+                //Remove the sprite
+                sprite.removeFromParent()
+            }
+        }
+    }
+    
     func touchDown(atPoint pos : CGPoint) {
         
     }
@@ -50,8 +84,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    @objc func swipedRight(sender: UISwipeGestureRecognizer) { print("Object has been swiped")}
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { print("swipe detected")
+    //@objc func swipedRight(sender: UISwipeGestureRecognizer) {}
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in:self)
             car.position.x = location.x
@@ -105,8 +139,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sprite.zPosition = 2
         
         //set up physics
-        sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
-        sprite.physicsBody?.affectedByGravity = false
+        //Car
+        car.physicsBody = SKPhysicsBody(rectangleOf: sprite.size)
+        car.physicsBody?.affectedByGravity = false
+        car.physicsBody?.isDynamic = true
+        car.physicsBody?.categoryBitMask = PhysicsCategory.car
+        car.physicsBody?.collisionBitMask = PhysicsCategory.none
+        car.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
+        
+        //Good Items
+        if randomIconIndex == 0 || randomIconIndex == 1 || randomIconIndex == 2{
+            sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
+            sprite.physicsBody?.affectedByGravity = false
+            sprite.physicsBody?.isDynamic = false
+            sprite.physicsBody?.categoryBitMask = PhysicsCategory.sprite
+            sprite.physicsBody?.contactTestBitMask = PhysicsCategory.obstacle
+        }
+        //Bad Items
+        else {
+            sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
+            sprite.physicsBody?.affectedByGravity = false
+            sprite.physicsBody?.isDynamic = false
+            sprite.physicsBody?.categoryBitMask = PhysicsCategory.obstacle
+            sprite.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
+        }
         
         //spawn sprite
         addChild(sprite)
@@ -125,7 +181,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let wait = SKAction.wait(forDuration: 3.0)  // Adjust time based on your needs
         run(SKAction.repeatForever(SKAction.sequence([create, wait])))
     }
+    
+    //physics category
+    struct PhysicsCategory {
+        static let none      : UInt32 = 0
+        static let all       : UInt32 = UInt32.max
+        static let sprite    : UInt32 = 0b1       // 1
+        static let obstacle  : UInt32 = 0b10      // 2
+        static let car       : UInt32 = 0b11      // 3
+        
+    }
 }
+
+
         
       
 
