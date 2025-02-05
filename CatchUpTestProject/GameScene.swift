@@ -27,6 +27,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
     let badItemHaptics = UINotificationFeedbackGenerator()
     var itemDropRate = 2.0
+    
 
 
     
@@ -48,6 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Add the score to the scene
         addChild(scoreLabel)
         
+        //columns
         columnPositions = [
             frame.midX - 71.5, frame.midX, frame.midX + 71.5
         ]
@@ -114,7 +116,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 } else{
                     updateScore(by: -10)
                 }
-                
             }
         }
     }
