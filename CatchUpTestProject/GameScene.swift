@@ -8,6 +8,7 @@
 import SpriteKit
 import Foundation
 import GameplayKit
+import UIKit //Haptics
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -15,7 +16,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var car: SKSpriteNode!
     var scrollSpeed: CGFloat = 100
     var itemSpeed: CGFloat = 100
-    var itemConstant = 3.25
+    var itemConstant = 0.85
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
@@ -23,6 +24,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var icon: SKSpriteNode!
     var scoreLabel: SKLabelNode!
     var score = 0
+    let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
+    let badItemHaptics = UINotificationFeedbackGenerator()
+    var itemDropRate = 2.0
+
+
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
@@ -58,6 +64,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Start making sprites
         startGeneratingSprites()
+        
+        //Run haptics here to avoid lag
+        goodItemHaptics.impactOccurred()
+
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -78,6 +88,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if let sprite = firstBody.node {
                 // Remove the sprite
                 sprite.removeFromParent()
+                //haptics
+                goodItemHaptics.impactOccurred()
                 //Check for buffs
                 if sprite.name == "buffs"{
                     updateScore(by: 10)
@@ -92,6 +104,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if let sprite = firstBody.node {
                 //Remove the sprite
                 sprite.removeFromParent()
+                //haptics
+                badItemHaptics.notificationOccurred(.error)
                 //Check if it is a barrier
                 if sprite.name == "barrier"{
                     //end game by stopping movement
@@ -113,7 +127,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    //@objc func swipedRight(sender: UISwipeGestureRecognizer) {}
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in:self)
@@ -148,6 +161,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Convert new node position back to scroll layer space */
                 road.position = self.convert(newPosition, to: scrollLayer);
             }
+            if scrollSpeed < 400 {
+                scrollSpeed += 0.25
+            }
         }
     }
     
@@ -163,6 +179,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                          CGPoint(x: columnPositions[2], y: frame.maxY)]
         let randomPositionIndex = Int.random(in: 0..<positions.count)
         sprite.position = positions[randomPositionIndex]
+        
         //set Z position
         sprite.zPosition = 2
         
@@ -194,13 +211,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             sprite.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
         }
         
-        //spawn sprite
-        addChild(sprite)
-        
-        //move sprite at same speed as scroll
-        let moveDown = SKAction.moveBy(x: 0, y: -frame.size.height, duration: itemSpeed * CGFloat(fixedDelta) * itemConstant)
-        let remove = SKAction.removeFromParent()
-        sprite.run(SKAction.sequence([moveDown, remove]))
+        //spawn sprite when max speed occurs
+        if scrollSpeed == 400 {
+            addChild(sprite)
+            
+            //move sprite at same speed as scroll
+            let moveDown = SKAction.moveBy(x: 0, y: -frame.size.height, duration: itemSpeed * CGFloat(fixedDelta) * itemConstant)
+            let remove = SKAction.removeFromParent()
+            sprite.run(SKAction.sequence([moveDown, remove]))
+        }
     }
     
     //start spawning the sprites
@@ -208,7 +227,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let create = SKAction.run { [weak self] in
             self?.createRandomSprite()
         }
-        let wait = SKAction.wait(forDuration: 3.0)  // Adjust time based on your needs
+        let wait = SKAction.wait(forDuration: itemDropRate)  // Adjust time based on your needs
         run(SKAction.repeatForever(SKAction.sequence([create, wait])))
     }
     
@@ -222,6 +241,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    //Update Score
     func updateScore(by: Int){
         score += by
         if score < 0 {
