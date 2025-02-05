@@ -27,6 +27,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
     let badItemHaptics = UINotificationFeedbackGenerator()
     var itemDropRate = 2.0
+    
 
 
     
