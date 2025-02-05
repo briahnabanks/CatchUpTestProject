@@ -21,6 +21,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var initialTouchPosition: CGPoint?
     let iconNames: [String] = ["hat", "coney", "buffs", "pothole", "barrier"]
     var icon: SKSpriteNode!
+    var scoreLabel: SKLabelNode!
+    var score = 0
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
@@ -28,6 +30,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //conform scene to contact delegate to handle collisions
         self.physicsWorld.contactDelegate = self
+        
+        //set up score text
+        scoreLabel = SKLabelNode(fontNamed: "SF Pro Medium")
+        scoreLabel.text = "0"  // Initial text
+        scoreLabel.fontSize = 28
+        scoreLabel.fontColor = SKColor.white
+        scoreLabel.position = CGPoint(x: 237, y: 495)
+        scoreLabel.zPosition = 3
+        
+        // Add the score to the scene
+        addChild(scoreLabel)
         
         columnPositions = [
             frame.midX - 71.5, frame.midX, frame.midX + 71.5
@@ -62,18 +75,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         // check if car and good item collided
         if firstBody.categoryBitMask == PhysicsCategory.sprite && secondBody.categoryBitMask == PhysicsCategory.car {
-            print("good item")
             if let sprite = firstBody.node {
                 // Remove the sprite
                 sprite.removeFromParent()
+                //Check for buffs
+                if sprite.name == "buffs"{
+                    updateScore(by: 10)
+                } else {
+                    updateScore(by: 1)
+                }
             }
         }
         // check if car and bad item have collided
         else if firstBody.categoryBitMask == PhysicsCategory.obstacle && secondBody.categoryBitMask == PhysicsCategory.car{
-            print("bad item")
+            
             if let sprite = firstBody.node {
                 //Remove the sprite
                 sprite.removeFromParent()
+                //Check if it is a barrier
+                if sprite.name == "barrier"{
+                    //end game by stopping movement
+                    scene?.isPaused = true
+                    print("gameover")
+                } else{
+                    updateScore(by: -10)
+                }
+                
             }
         }
     }
@@ -151,6 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Good Items
         if randomIconIndex == 0 || randomIconIndex == 1 || randomIconIndex == 2{
             sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
+            sprite.name = iconNames[randomIconIndex]
             sprite.physicsBody?.affectedByGravity = false
             sprite.physicsBody?.isDynamic = false
             sprite.physicsBody?.categoryBitMask = PhysicsCategory.sprite
@@ -159,6 +187,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Bad Items
         else {
             sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
+            sprite.name = iconNames[randomIconIndex]
             sprite.physicsBody?.affectedByGravity = false
             sprite.physicsBody?.isDynamic = false
             sprite.physicsBody?.categoryBitMask = PhysicsCategory.obstacle
@@ -191,6 +220,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let obstacle  : UInt32 = 0b10      // 2
         static let car       : UInt32 = 0b11      // 3
         
+    }
+    
+    func updateScore(by: Int){
+        score += by
+        if score < 0 {
+            score = 0
+        }
+        scoreLabel.text = "\(score)"
     }
 }
 
