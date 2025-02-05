@@ -14,6 +14,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
     var scrollSpeed: CGFloat = 100
+    var itemSpeed: CGFloat = 100
+    var itemConstant = 3.25
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
@@ -106,7 +108,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scrollLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through scroll layer nodes */
-        
         for road in scrollLayer.children as! [SKSpriteNode] {
             
             /* Get ground node position, convert node position to scene space */
@@ -168,7 +169,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(sprite)
         
         //move sprite at same speed as scroll
-        let moveDown = SKAction.moveBy(x: 0, y: -frame.size.height, duration: scrollSpeed * (CGFloat(fixedDelta) * 3.25))
+        let moveDown = SKAction.moveBy(x: 0, y: -frame.size.height, duration: itemSpeed * CGFloat(fixedDelta) * itemConstant)
         let remove = SKAction.removeFromParent()
         sprite.run(SKAction.sequence([moveDown, remove]))
     }
