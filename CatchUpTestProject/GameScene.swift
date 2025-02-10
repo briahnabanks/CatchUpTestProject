@@ -49,6 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Add the score to the scene
         addChild(scoreLabel)
         
+        //columns
         columnPositions = [
             frame.midX - 71.5, frame.midX, frame.midX + 71.5
         ]
@@ -115,7 +116,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 } else{
                     updateScore(by: -10)
                 }
-                
             }
         }
     }
