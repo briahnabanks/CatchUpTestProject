@@ -20,13 +20,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var columnPositions = [CGFloat]()
     var initialTouchPosition: CGPoint?
-    let iconNames: [String] = ["hat", "coney", "buffs", "pothole", "barrier"]
+    let iconNames: [String] = ["hat", "coney", "buffs", "faygo", "pothole", "barrier"]
     var icon: SKSpriteNode!
     var scoreLabel: SKLabelNode!
     var score = 0
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
     let badItemHaptics = UINotificationFeedbackGenerator()
-    var itemDropRate = 2.0
+    var itemDropRate = 1.0
     
 
 
@@ -194,7 +194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         car.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
         
         //Good Items
-        if randomIconIndex == 0 || randomIconIndex == 1 || randomIconIndex == 2{
+        if randomIconIndex == 0 || randomIconIndex == 1 || randomIconIndex == 2 || randomIconIndex == 3{
             sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
             sprite.name = iconNames[randomIconIndex]
             sprite.physicsBody?.affectedByGravity = false
