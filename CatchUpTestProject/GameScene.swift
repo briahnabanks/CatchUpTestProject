@@ -9,6 +9,9 @@ import SpriteKit
 import Foundation
 import GameplayKit
 import UIKit //Haptics
+import AVFoundation
+
+var player: AVAudioPlayer!
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -37,6 +40,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //conform scene to contact delegate to handle collisions
         self.physicsWorld.contactDelegate = self
+        
+
+        //_ = SKAudioNode(fileNamed: "babytron type beat.mp3")
         
         //set up score text
         scoreLabel = SKLabelNode(fontNamed: "SF Pro Medium")
@@ -70,7 +76,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Run haptics here to avoid lag
         goodItemHaptics.impactOccurred()
 
+        let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
+      player = try! AVAudioPlayer(contentsOf: url)
+          player.play()
     }
+    
+    //Add Audio
+//    func playButton(_ sender: UIButton) {
+//      let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
+//    player = try! AVAudioPlayer(contentsOf: url)
+//        player.play()
+//    }
     
     func didBegin(_ contact: SKPhysicsContact) {
         var firstBody: SKPhysicsBody
