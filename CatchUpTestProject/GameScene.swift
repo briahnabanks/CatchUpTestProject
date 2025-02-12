@@ -238,6 +238,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    
     //start spawning the sprites
     func startGeneratingSprites() {
         
