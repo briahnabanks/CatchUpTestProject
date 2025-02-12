@@ -26,9 +26,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
     let badItemHaptics = UINotificationFeedbackGenerator()
-    var itemDropRate = 1.0
-    
-
+    var itemDropRate = 0.80
 
     
     override func didMove(to view: SKView) {
@@ -56,10 +54,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Initialize column positions
         car = self.childNode(withName: "car") as? SKSpriteNode
-        car.position = CGPoint(x: columnPositions[1], y: 60)
-        
-        //conform to physics delegate
-        self.physicsWorld.contactDelegate = self
+        car.position = CGPoint(x: columnPositions[1], y: 70)
         
         //Spawn in random icon
         icon = self.childNode(withName: iconNames.randomElement() ?? "hat") as? SKSpriteNode
@@ -69,7 +64,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Run haptics here to avoid lag
         goodItemHaptics.impactOccurred()
-
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -102,7 +96,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // check if car and bad item have collided
         else if firstBody.categoryBitMask == PhysicsCategory.obstacle && secondBody.categoryBitMask == PhysicsCategory.car{
-            
             if let sprite = firstBody.node {
                 //Remove the sprite
                 sprite.removeFromParent()
@@ -119,27 +112,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
-    func touchDown(atPoint pos : CGPoint) {
-        
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        
-    }
-    
+
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in:self)
             car.position.x = location.x
         }
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        /* Called when a touch begins */
-        
-    }
-    
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         scrollWorld()
@@ -167,24 +146,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
     func createRandomSprite() {
         //randomly choose a texture
         let randomIconIndex = Int.random(in: 0..<iconNames.count)
         let texture = SKTexture(imageNamed: iconNames[randomIconIndex])
         let sprite = SKSpriteNode(texture: texture)
+        let barrier = SKSpriteNode(texture: SKTexture(imageNamed: "barrier"))
+        let pothole = SKSpriteNode(texture: SKTexture(imageNamed: "pothole"))
+        
         
         //initialize position
         let positions = [CGPoint(x: columnPositions[0], y: frame.maxY),
                          CGPoint(x: columnPositions[1], y: frame.maxY),
                          CGPoint(x: columnPositions[2], y: frame.maxY)]
         let randomPositionIndex = Int.random(in: 0..<positions.count)
-        sprite.position = positions[randomPositionIndex]
         
+        var barrierPositionIndex = Int.random(in: 0..<positions.count)
+        if randomPositionIndex == barrierPositionIndex {
+            if randomPositionIndex - 1 < 0 {
+                barrierPositionIndex += 1
+            }
+            else if randomPositionIndex + 1 > 2 {
+                barrierPositionIndex -= 1
+            }
+            else {
+                barrierPositionIndex -= 1
+            }
+        }
+        
+        //set sprite position
+        sprite.position = positions[randomPositionIndex]
+        pothole.position = positions[randomPositionIndex]
+        barrier.position = positions[barrierPositionIndex]
         //set Z position
         sprite.zPosition = 2
+        barrier.zPosition = 2
+        pothole.zPosition = 2
         
-        //set up physics
+        //set up physics for all sprites
         //Car
         car.physicsBody = SKPhysicsBody(rectangleOf: sprite.size)
         car.physicsBody?.affectedByGravity = false
@@ -192,7 +191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         car.physicsBody?.categoryBitMask = PhysicsCategory.car
         car.physicsBody?.collisionBitMask = PhysicsCategory.none
         car.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
-        
+    
         //Good Items
         if randomIconIndex == 0 || randomIconIndex == 1 || randomIconIndex == 2 || randomIconIndex == 3{
             sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
@@ -202,34 +201,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             sprite.physicsBody?.categoryBitMask = PhysicsCategory.sprite
             sprite.physicsBody?.contactTestBitMask = PhysicsCategory.obstacle
         }
-        //Bad Items
-        else {
-            sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
-            sprite.name = iconNames[randomIconIndex]
-            sprite.physicsBody?.affectedByGravity = false
-            sprite.physicsBody?.isDynamic = false
-            sprite.physicsBody?.categoryBitMask = PhysicsCategory.obstacle
-            sprite.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
-        }
+        //Barrier
+        barrier.physicsBody = SKPhysicsBody(texture: SKTexture(imageNamed: "barrier"), size: barrier.size)
+        barrier.name = "barrier"
+        barrier.physicsBody?.affectedByGravity = false
+        barrier.physicsBody?.isDynamic = false
+        barrier.physicsBody?.categoryBitMask = PhysicsCategory.obstacle
+        barrier.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
+        //pothole
+        pothole.physicsBody = SKPhysicsBody(texture: SKTexture(imageNamed: "pothole"), size: pothole.size)
+        pothole.name = "pothole"
+        pothole.physicsBody?.affectedByGravity = false
+        pothole.physicsBody?.isDynamic = false
+        pothole.physicsBody?.categoryBitMask = PhysicsCategory.obstacle
+        pothole.physicsBody?.contactTestBitMask = PhysicsCategory.sprite
         
         //spawn sprite when max speed occurs
-        if scrollSpeed == 400 {
-            addChild(sprite)
+        if scrollSpeed >= 400 {
+            //if good item
+            if sprite.physicsBody?.categoryBitMask == PhysicsCategory.sprite {
+                //Add sprite and barrier to scene
+                addChild(barrier)
+                addChild(sprite)
+            }
+            else{
+                //Add bad item (pothole or single barrier)
+                addChild(pothole)
+            }
             
+
             //move sprite at same speed as scroll
             let moveDown = SKAction.moveBy(x: 0, y: -frame.size.height, duration: itemSpeed * CGFloat(fixedDelta) * itemConstant)
             let remove = SKAction.removeFromParent()
             sprite.run(SKAction.sequence([moveDown, remove]))
+            barrier.run(SKAction.sequence([moveDown, remove]))
+            pothole.run(SKAction.sequence([moveDown, remove]))
         }
     }
     
     //start spawning the sprites
     func startGeneratingSprites() {
+        
         let create = SKAction.run { [weak self] in
             self?.createRandomSprite()
         }
-        let wait = SKAction.wait(forDuration: itemDropRate)  // Adjust time based on your needs
-        run(SKAction.repeatForever(SKAction.sequence([create, wait])))
+        let dropRate = SKAction.wait(forDuration: itemDropRate)
+        run(SKAction.repeatForever(SKAction.sequence([create, dropRate])))
     }
     
     //physics category
