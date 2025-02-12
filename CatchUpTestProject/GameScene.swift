@@ -154,7 +154,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let barrier = SKSpriteNode(texture: SKTexture(imageNamed: "barrier"))
         let pothole = SKSpriteNode(texture: SKTexture(imageNamed: "pothole"))
         
-        
         //initialize position
         let positions = [CGPoint(x: columnPositions[0], y: frame.maxY),
                          CGPoint(x: columnPositions[1], y: frame.maxY),
