@@ -9,6 +9,9 @@ import SpriteKit
 import Foundation
 import GameplayKit
 import UIKit //Haptics
+import AVFoundation
+
+var player: AVAudioPlayer!
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -64,6 +67,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Run haptics here to avoid lag
         goodItemHaptics.impactOccurred()
+
+        let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
+      player = try! AVAudioPlayer(contentsOf: url)
+          player.play()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
