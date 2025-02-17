@@ -33,6 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     
     override func didMove(to view: SKView) {
+        
         /* Setup your scene here */
         scrollLayer = self.childNode(withName: "scrollLayer")
         
@@ -67,10 +68,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Run haptics here to avoid lag
         goodItemHaptics.impactOccurred()
-
+        
         let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
-      player = try! AVAudioPlayer(contentsOf: url)
-          player.play()
+        player = try! AVAudioPlayer(contentsOf: url)
+        player.play()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
