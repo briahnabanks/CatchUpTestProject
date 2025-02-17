@@ -30,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light)
     let badItemHaptics = UINotificationFeedbackGenerator()
     var itemDropRate = 0.80
+    var gameover : SKSpriteNode!
 
     
     override func didMove(to view: SKView) {
@@ -67,10 +68,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Run haptics here to avoid lag
         goodItemHaptics.impactOccurred()
-
-        let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
-      player = try! AVAudioPlayer(contentsOf: url)
-          player.play()
+        
+        //Pre render GameOver Text
+        gameover = SKSpriteNode(texture: SKTexture(imageNamed: "gameover"))
+        gameover.size = CGSize(width: 300, height: 300)
+        gameover.position = CGPoint(x: columnPositions[1], y: 400)
+        addChild(gameover)
+        gameover.zPosition = 3
+        gameover.isHidden = true
+        
+        //Start
+        startCountdown()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -101,6 +109,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+        
         // check if car and bad item have collided
         else if firstBody.categoryBitMask == PhysicsCategory.obstacle && secondBody.categoryBitMask == PhysicsCategory.car{
             if let sprite = firstBody.node {
@@ -112,7 +121,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if sprite.name == "barrier"{
                     //end game by stopping movement
                     scene?.isPaused = true
-                    print("gameover")
+                    gameover.isHidden = false
                 } else{
                     updateScore(by: -10)
                 }
@@ -149,7 +158,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 road.position = self.convert(newPosition, to: scrollLayer);
             }
             if scrollSpeed < 400 {
-                scrollSpeed += 0.25
+                scrollSpeed += 0.15
             }
         }
     }
@@ -273,6 +282,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             score = 0
         }
         scoreLabel.text = "\(score)"
+    }
+    
+    func startCountdown() {
+        let countdownLabel = SKLabelNode(fontNamed: "SF Pro Display-Medium")
+        let instructions1 = SKSpriteNode(texture: SKTexture(imageNamed: "instructions1"))
+        let instructions2 = SKSpriteNode(texture: SKTexture(imageNamed: "instructions2"))
+        
+        instructions1.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        instructions2.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        
+        instructions1.zPosition = 4
+        instructions2.zPosition = 4
+        
+        instructions1.size = CGSize(width: 320, height: 568)
+        instructions2.size = CGSize(width: 320, height: 568)
+        
+        addChild(instructions1)
+        addChild(instructions2)
+        addChild(countdownLabel)
+        
+        instructions1.isHidden = true
+        instructions2.isHidden = true
+        
+        let countdownSequence = SKAction.sequence([
+            SKAction.run { instructions1.isHidden = false },
+            SKAction.wait(forDuration: 5.0),
+            SKAction.run { instructions1.isHidden = true
+                instructions2.isHidden = false},
+            SKAction.wait(forDuration: 5.0),
+            SKAction.run { instructions2.isHidden = true},
+            SKAction.wait(forDuration: 2.0),
+            SKAction.fadeOut(withDuration: 0.5),
+            SKAction.removeFromParent()
+        ])
+        
+        countdownLabel.run(countdownSequence)
+        
+        let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
+        player = try! AVAudioPlayer(contentsOf: url)
+        player.play()
     }
 }
 
