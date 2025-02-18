@@ -13,8 +13,13 @@ import AVFoundation
 
 var player: AVAudioPlayer!
 
+enum GameSceneState {
+    case active, gameOver
+}
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+
     var scrollLayer: SKNode!
     var car: SKSpriteNode!
     var scrollSpeed: CGFloat = 100
@@ -31,7 +36,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let badItemHaptics = UINotificationFeedbackGenerator()
     var itemDropRate = 0.80
     var gameover : SKSpriteNode!
-
+    var runItBackButton : MSButtonNode!
+    var gameState: GameSceneState = .active
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
@@ -39,6 +45,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //conform scene to contact delegate to handle collisions
         self.physicsWorld.contactDelegate = self
+        
         
         //set up score text
         scoreLabel = SKLabelNode(fontNamed: "SF Pro Medium")
@@ -76,6 +83,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(gameover)
         gameover.zPosition = 3
         gameover.isHidden = true
+  
+        runItBackButton = (self.childNode(withName: "runItBackButton") as! MSButtonNode)
+        
+        runItBackButton.selectedHandler = {
+
+          /* Grab reference to our SpriteKit view */
+          let skView = self.view as SKView?
+
+          /* Load Game scene */
+          let scene = GameScene(fileNamed:"GameScene") as GameScene?
+
+          /* Ensure correct aspect mode */
+          scene?.scaleMode = .aspectFill
+
+          /* Restart game scene */
+          skView?.presentScene(scene)
+            print("new game start")
+
+        }
+        
+        /* Hide restart button */
+        runItBackButton.state = .MSButtonNodeStateHidden
         
         //Start
         startCountdown()
@@ -122,11 +151,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     //end game by stopping movement
                     scene?.isPaused = true
                     gameover.isHidden = false
+                    /* Show restart button */
+                    runItBackButton.state = .MSButtonNodeStateActive
                 } else{
                     updateScore(by: -10)
                 }
             }
         }
+        
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
