@@ -92,7 +92,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
           let skView = self.view as SKView?
 
           /* Load Game scene */
-          let scene = GameScene(fileNamed:"GameScene") as GameScene?
+          let scene = GameScene(fileNamed:"PlayScene") as GameScene?
 
           /* Ensure correct aspect mode */
           scene?.scaleMode = .aspectFill
