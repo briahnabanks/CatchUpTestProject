@@ -13,6 +13,10 @@ import AVFoundation
 
 var player: AVAudioPlayer! // Global audio player for background music
 
+enum GameSceneState {
+    case active, gameOver
+}
+
 // GameScene is a subclass of SKScene and conforms to SKPhysicsContactDelegate for collision handling.
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -34,7 +38,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let badItemHaptics = UINotificationFeedbackGenerator()         // Haptic feedback for bad items.
     var itemDropRate = 0.80        // Interval for spawning new items.
     var gameover : SKSpriteNode!   // Sprite node for the game over image.
-
+    var runItBackButton : MSButtonNode!
+    var gameState: GameSceneState = .active
     // MARK: - Scene Lifecycle
     
     override func didMove(to view: SKView) {
@@ -46,7 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Set the physics world contact delegate for collision detection.
         self.physicsWorld.contactDelegate = self
         
-        // Set up the score label with its properties.
+      // Set up the score label with its properties.
         scoreLabel = SKLabelNode(fontNamed: "SF Pro Medium")
         scoreLabel.text = "0"  // Initial text.
         scoreLabel.fontSize = 28
@@ -82,6 +87,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(gameover)
         gameover.zPosition = 3
         gameover.isHidden = true
+  
+        runItBackButton = (self.childNode(withName: "runItBackButton") as! MSButtonNode)
+        
+        runItBackButton.selectedHandler = {
+
+          /* Grab reference to our SpriteKit view */
+          let skView = self.view as SKView?
+
+          /* Load Game scene */
+          let scene = GameScene(fileNamed:"PlayScene") as GameScene?
+
+          /* Ensure correct aspect mode */
+          scene?.scaleMode = .aspectFill
+
+          /* Restart game scene */
+          skView?.presentScene(scene)
+            print("new game start")
+
+        }
+        
+        /* Hide restart button */
+        runItBackButton.state = .MSButtonNodeStateHidden
         
         // Start the countdown sequence and background music.
         startCountdown()
@@ -131,11 +158,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     // Pause the scene and display the Game Over image.
                     scene?.isPaused = true
                     gameover.isHidden = false
+                    /* Show restart button */
+                    runItBackButton.state = .MSButtonNodeStateActive
                 } else{
                     updateScore(by: -10)
                 }
             }
         }
+        
     }
 
     // MARK: - Touch Handling
