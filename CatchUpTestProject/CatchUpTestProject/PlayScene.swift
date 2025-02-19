@@ -297,6 +297,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let sprite    : UInt32 = 0b1       // 1
         static let obstacle  : UInt32 = 0b10      // 2
         static let car       : UInt32 = 0b11      // 3
+        
     }
     
     // MARK: - Score Management
