@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1516px" height="701px" viewBox="0 0 1516 701" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group Copy</title>
+    <defs>
+        <text id="text-1" font-family="ArialMT, Arial" font-size="250" font-weight="normal" fill="#FFFFFF">
+            <tspan x="466.022949" y="293">Start</tspan>
+        </text>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPhone-16-Pro-Max" transform="translate(-395, -2214)">
+            <g id="Group-Copy" transform="translate(395, 2214)">
+                <rect id="Rectangle" fill="#279989" x="0" y="0" width="1516" height="451" rx="49"></rect>
+                <rect id="Rectangle-Copy-8" stroke="#FFFFFF" stroke-width="15" fill="#279989" x="34.5" y="30.5" width="1448" height="389" rx="49"></rect>
+                <g id="Start-Copy" fill="#FFFFFF" fill-opacity="1">
+                    <use filter="url(#filter-2)" xlink:href="#text-1"></use>
+                    <use xlink:href="#text-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

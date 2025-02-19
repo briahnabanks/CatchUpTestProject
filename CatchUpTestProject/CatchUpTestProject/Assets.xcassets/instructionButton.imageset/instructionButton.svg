@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2032px" height="707px" viewBox="0 0 2032 707" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 2</title>
+    <defs>
+        <text id="text-1" font-family="ArialMT, Arial" font-size="250" font-weight="normal" fill="#FFFFFF">
+            <tspan x="376.839844" y="299">Instructions</tspan>
+        </text>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+        <text id="text-3" font-family="ArialMT, Arial" font-size="250" font-weight="normal" fill="#FFFFFF">
+            <tspan x="376.839844" y="299">Instructions</tspan>
+        </text>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iPhone-16-Pro-Max" transform="translate(-136, -2824)">
+            <g id="Group-2" transform="translate(136, 2824)">
+                <g id="STREET-SIGN-B-Copy" transform="translate(258, 0)" fill="#279989">
+                    <rect id="Rectangle" x="0" y="0" width="1516" height="451" rx="49"></rect>
+                    <rect id="Rectangle-Copy-8" stroke="#FFFFFF" stroke-width="15" x="34.5" y="30.5" width="1448" height="389" rx="49"></rect>
+                </g>
+                <g id="Instructions" fill="#FFFFFF" fill-opacity="1">
+                    <use filter="url(#filter-2)" xlink:href="#text-1"></use>
+                    <use xlink:href="#text-1"></use>
+                </g>
+                <g id="STREET-SIGN-B-Copy" transform="translate(258, 0)" fill="#279989">
+                    <rect id="Rectangle" x="0" y="0" width="1516" height="451" rx="49"></rect>
+                    <rect id="Rectangle-Copy-8" stroke="#FFFFFF" stroke-width="15" x="34.5" y="30.5" width="1448" height="389" rx="49"></rect>
+                </g>
+                <g id="Instructions" fill="#FFFFFF" fill-opacity="1">
+                    <use filter="url(#filter-4)" xlink:href="#text-3"></use>
+                    <use xlink:href="#text-3"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
