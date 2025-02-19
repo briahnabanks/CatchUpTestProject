@@ -1,9 +1,8 @@
 //
 //  MSButtonNode.swift
-//  Make School
+//  CatchUpTestProject
 //
-//  Created by Martin Walsh on 20/02/2016.
-//  Copyright (c) 2016 Make School. All rights reserved.
+//  Created by Joseph Brinker on 02/18/25.
 //
 
 import SpriteKit
