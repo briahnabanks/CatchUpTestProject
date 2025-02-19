@@ -35,10 +35,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var itemDropRate = 0.80        // Interval for spawning new items.
     var gameoverText : SKSpriteNode!   // Sprite node for the game over image.
     var gameoverBackground : SKSpriteNode! // Sprite for the gameover background image
-    var startBackground : SKSpriteNode! // Background of the starting page
-    var startLogo : SKSpriteNode! // Catchup logo at start
-    var startButton : MSButtonNode! // Button to start the game
-    var instructionButton : MSButtonNode! // Button for instructions
     var runItBackButton : MSButtonNode! // Button node for the replay button
     
     // MARK: - Scene Lifecycle
