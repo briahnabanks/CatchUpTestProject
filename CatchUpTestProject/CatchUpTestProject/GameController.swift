@@ -19,7 +19,6 @@ class GameViewController: UIViewController {
             if let scene = SKScene(fileNamed: "PlayScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
-                
                 // Present the scene
                 view.presentScene(scene)
             }
