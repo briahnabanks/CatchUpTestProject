@@ -13,10 +13,6 @@ import AVFoundation
 
 var player: AVAudioPlayer! // Global audio player for background music
 
-enum GameSceneState {
-    case active, gameOver
-}
-
 // GameScene is a subclass of SKScene and conforms to SKPhysicsContactDelegate for collision handling.
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -37,10 +33,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let goodItemHaptics = UIImpactFeedbackGenerator(style: .light) // Haptic feedback for good items.
     let badItemHaptics = UINotificationFeedbackGenerator()         // Haptic feedback for bad items.
     var itemDropRate = 0.80        // Interval for spawning new items.
-    var gameover : SKSpriteNode!   // Sprite node for the game over image.
-    var gameoverbackground : SKSpriteNode! // Sprite for the gameover background image
-    var runItBackButton : MSButtonNode!
-    var gameState: GameSceneState = .active
+    var gameoverText : SKSpriteNode!   // Sprite node for the game over image.
+    var gameoverBackground : SKSpriteNode! // Sprite for the gameover background image
+    var runItBackButton : MSButtonNode! // Button node for the replay button
     
     // MARK: - Scene Lifecycle
     
@@ -81,34 +76,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Trigger a haptic feedback to pre-warm the haptics (avoids lag during gameplay).
         goodItemHaptics.impactOccurred()
         
-        // Pre-render the Game Over image, set its properties, and add it to the scene.
-        gameover = SKSpriteNode(texture: SKTexture(imageNamed: "gameover"))
-        gameoverbackground = SKSpriteNode(texture: SKTexture(imageNamed: "gameoverbackground"))
-        gameover.size = CGSize(width: 300, height: 300)
-        gameover.position = CGPoint(x: columnPositions[1], y: 400)
-        gameoverbackground.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(gameover)
-        addChild(gameoverbackground)
-        gameover.zPosition = 4
-        gameoverbackground.zPosition = 3
-        gameover.isHidden = true
-        gameoverbackground.isHidden = true
+        // Initialize end screen sprites
+        gameOverAssets()
         
-        // Initialize replay button and its properties
-        runItBackButton = (self.childNode(withName: "runItBackButton") as! MSButtonNode)
-        runItBackButton.position = CGPoint(x: size.width / 2, y: 200)
-        runItBackButton.selectedHandler = {
-            /* Grab reference to our SpriteKit view */
-            let skView = self.view as SKView?
-            /* Load Game scene */
-            let scene = GameScene(fileNamed:"PlayScene") as GameScene?
-            /* Ensure correct aspect mode */
-            scene?.scaleMode = .aspectFill
-            /* Restart game scene */
-            skView?.presentScene(scene)
-        }
-        /* Hide restart button */
-        runItBackButton.state = .MSButtonNodeStateHidden
+        // Initialize replay button
+        replayButton()
         
         // Start the countdown sequence and background music.
         startCountdown()
@@ -157,8 +129,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if sprite.name == "barrier"{
                     // Pause the scene and display the Game Over image.
                     scene?.isPaused = true
-                    gameover.isHidden = false
-                    gameoverbackground.isHidden = false
+                    gameoverText.isHidden = false
+                    gameoverBackground.isHidden = false
                     /* Show restart button */
                     runItBackButton.state = .MSButtonNodeStateActive
                 } else{
@@ -400,5 +372,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player = try! AVAudioPlayer(contentsOf: url)
         player.numberOfLoops = -1 // Infinitely loop
         player.play()
+    }
+    // MARK: - End Screen and Replayability
+    
+    // Initialize and give attributes to game over sprites
+    func gameOverAssets() {
+        // Pre-render the Game Over image, set its properties, and add it to the scene.
+        gameoverText = SKSpriteNode(texture: SKTexture(imageNamed: "gameover"))
+        gameoverBackground = SKSpriteNode(texture: SKTexture(imageNamed: "gameoverbackground"))
+        gameoverText.size = CGSize(width: 300, height: 300)
+        gameoverText.position = CGPoint(x: columnPositions[1], y: 400)
+        gameoverBackground.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(gameoverText)
+        addChild(gameoverBackground)
+        gameoverText.zPosition = 4
+        gameoverBackground.zPosition = 3
+        gameoverText.isHidden = true
+        gameoverBackground.isHidden = true
+    }
+    
+    // Create and assign properties to the replay button
+    func replayButton() {
+        // Initialize replay button and its properties
+        runItBackButton = (self.childNode(withName: "runItBackButton") as! MSButtonNode)
+        runItBackButton.position = CGPoint(x: size.width / 2, y: 200)
+        runItBackButton.selectedHandler = {
+            /* Grab reference to our SpriteKit view */
+            let skView = self.view as SKView?
+            /* Load Game scene */
+            let scene = GameScene(fileNamed:"PlayScene") as GameScene?
+            /* Ensure correct aspect mode */
+            scene?.scaleMode = .aspectFill
+            /* Restart game scene */
+            skView?.presentScene(scene)
+        }
+        /* Hide restart button */
+        runItBackButton.state = .MSButtonNodeStateHidden
     }
 }
