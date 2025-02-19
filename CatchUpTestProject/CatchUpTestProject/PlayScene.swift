@@ -347,27 +347,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let countdownLabel = SKLabelNode(fontNamed: "SF Pro Display-Medium")
         let instructions1 = SKSpriteNode(texture: SKTexture(imageNamed: "instructions1"))
         let instructions2 = SKSpriteNode(texture: SKTexture(imageNamed: "instructions2"))
+        let go = SKSpriteNode(texture: SKTexture(imageNamed: "go"))
         
         // Position instructions in the center of the scene.
         instructions1.position = CGPoint(x: size.width / 2, y: size.height / 2)
         instructions2.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        go.position = CGPoint(x: size.width / 2, y: size.height / 2)
         
         // Set zPositions to ensure instructions appear above other elements.
         instructions1.zPosition = 4
         instructions2.zPosition = 4
         
         // Set sizes for the instruction sprites.
-        instructions1.size = CGSize(width: 320, height: 570)
-        instructions2.size = CGSize(width: 320, height: 570)
+        instructions1.size = CGSize(width: 280, height: 568)
+        instructions2.size = CGSize(width: 280, height: 568)
+        go.size = CGSize(width: 200, height: 200)
         
         // Add instructions and countdown label to the scene.
         addChild(instructions1)
         addChild(instructions2)
+        addChild(go)
         addChild(countdownLabel)
         
         // Initially hide the instruction sprites.
         instructions1.isHidden = true
         instructions2.isHidden = true
+        go.isHidden = true
         
         // Create a sequence to show instructions, wait, and then fade out.
         let countdownSequence = SKAction.sequence([
@@ -376,8 +381,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.run { instructions1.isHidden = true
                 instructions2.isHidden = false},
             SKAction.wait(forDuration: 5.0),
-            SKAction.run { instructions2.isHidden = true},
+            SKAction.run { instructions2.isHidden = true
+                go.isHidden = false},
             SKAction.wait(forDuration: 2.0),
+            SKAction.run {
+                go.isHidden = true
+            },
             SKAction.fadeOut(withDuration: 0.5),
             SKAction.removeFromParent()
         ])
@@ -388,6 +397,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Load and play background music.
         let url = Bundle.main.url(forResource: "babytron type beat", withExtension: "mp3")!
         player = try! AVAudioPlayer(contentsOf: url)
+        player.numberOfLoops = -1 // Infinitely loop
         player.play()
     }
 }
