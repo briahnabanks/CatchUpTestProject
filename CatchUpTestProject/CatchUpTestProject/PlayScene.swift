@@ -378,7 +378,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Initialize and give attributes to game over sprites
     func gameOverAssets() {
         // Pre-render the Game Over image, set its properties, and add it to the scene.
-        gameoverText = SKSpriteNode(texture: SKTexture(imageNamed: "gameover"))
+        gameoverText = SKSpriteNode(texture: SKTexture(imageNamed: "GameOver"))
         gameoverBackground = SKSpriteNode(texture: SKTexture(imageNamed: "gameoverbackground"))
         gameoverText.size = CGSize(width: 300, height: 300)
         gameoverText.position = CGPoint(x: columnPositions[1], y: 400)
